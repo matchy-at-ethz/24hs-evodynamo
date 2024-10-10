@@ -196,9 +196,7 @@ According to the theorem, the non-trivial equilibrium point corresponds to the l
 $$
 \lambda_1 = \frac{
   q(f_0 + 1) + \sqrt{q^2(f_0 + 1)^2 - 4f_0(2q - 1)}
-}{
-  2
-}
+}{2}
 $$
 
 as we have $q \in (0, 1)$ and $f_0 > 1$.
@@ -207,13 +205,6 @@ as we have $q \in (0, 1)$ and $f_0 > 1$.
 
 \begin{displayquote}
 Examine the dynamics of the quasispecies equation and confirm the results obtained in **(b)**. Assume that $q = 0.7$ and $f_0 = 1.5$, with the initial condition $(0.9, 0.1)$. Modify your simulation to track the average fitness of the population over time. How does the average fitness evolve as the population approaches equilibrium?
-\end{displayquote}
-
-
-## (d)
-
-\begin{displayquote}
-What is the equilibrium point for $f_0 = f_1 = 1$?
 \end{displayquote}
 
 ```{r setup_python}
@@ -257,28 +248,183 @@ X_1 = ivp[0] * eigvecs[1, 0] * np.exp(eigvals[0] * time) + \
       ivp[1] * eigvecs[1, 1] * np.exp(eigvals[1] * time)
 ```
 
-```{python plot, results='hide', message=FALSE, warning=FALSE}
+```{python plot}
 plt.plot(time, X_0, label='Genotype 0')
 plt.plot(time, X_1, label='Genotype 1')
 plt.xlabel('Time')
 plt.ylabel('x')
 plt.legend()
 plt.show()
-plt.cla()
+
+```
+
+```{python plot2}
+plt.plot(time, X_0 / (X_0 + X_1), label='Genotype 0')
+plt.plot(time, X_1 / (X_0 + X_1), label='Genotype 1')
+plt.xlabel('Time')
+plt.legend()
+plt.show()
+
 ```
 
 Plug $q = 0.7$, $f_0 = 1.5$ into the formula, we have
 
 $$
 \lambda_{1,2} = \frac{
-  0.6 \cdot 2.5 \pm \sqrt{0.6^2 \cdot 2.5^2 - 4 \cdot 1.5 \cdot 0.2}
+  0.7 \cdot 2.5 \pm \sqrt{0.7^2 \cdot 2.5^2 - 4 \cdot 1.5 \cdot 0.4}
 }{
   2
-} =
+} = \frac{1.75 \pm \sqrt{0.6625}}{2}
 $$
+
+We have
+
+$$
+\lambda_1 \approx 1.282, \qquad
+\lambda_2 \approx 0.468
+$$
+
+And then we have the equilibrium point $x^*$ satisfies:
+
+$$
+\begin{aligned}
+(W - \lambda_1 I)x^* &= 0 \\
+\begin{bmatrix}
+  1.5\cdot0.7 - 1.28 & 0.3 \\
+  1.5\cdot0.3 & 0.7-1.28
+\end{bmatrix} x^* &= 0 \\
+\begin{bmatrix}
+  -0.232 & 0.3 \\
+  0.45 & -0.582
+\end{bmatrix} x^* &= 0
+\end{aligned}
+$$
+
+Solving the system of equations, we have
+
+$$
+x^* \approx \begin{bmatrix}
+  0.564 \\
+  0.436
+\end{bmatrix}
+$$
+
+which exactly confirms with the solution in the numerical simulation:
+
+```{python show_val}
+x_star
+```
+
+```{python simulate_fitness_phi}
+phi_t = np.sum([X_0 * f0, X_1 * f1], axis=0) / (X_0 + X_1)
+```
+
+```{python plot_fitness}
+# figuresize 10x5 inches
+plt.plot(time, phi_t)
+plt.xlabel('Time')
+plt.ylabel('Average Fitness')
+# tight layout
+plt.tight_layout()
+plt.show()
+
+```
+
+It confirms with the lecture that in general, the equilibrium $x^*$ does not maximize the fitness $\phi$. Mutation reduces population fitness.
+
+## (d)
+
+\begin{displayquote}
+What is the equilibrium point for $f_0 = f_1 = 1$?
+\end{displayquote}
+
+If $f_0 = f_1 = 1$, then the matrix $W$ becomes
+
+$$
+W = \begin{bmatrix}
+  q & (1-q) \\
+  (1-q) & q
+\end{bmatrix}
+$$
+
+The solution to the characteristic equation:
+
+$$
+\lambda_{1,2} = \frac{
+  2q \pm \sqrt{4q^2 - 8q + 4}
+}{
+  2
+} = q \pm \sqrt{(q-1)^2}
+$$
+
+which means
+
+$$
+\lambda_1 = 2q - 1, \qquad \lambda_2 = 1
+$$
+
+Since $q \leq 1$, $\lambda_{max} = \lambda_2 = 1$.
+
+Plugging back to the equation, we have
+
+$$
+W - I = \begin{bmatrix}
+  q-1 & 1-q \\
+  1-q & q-1
+\end{bmatrix} x^* = 0
+$$
+
+which yields $x^* = (0.5, 0.5)$.
 
 ## (e)
 
 \begin{displayquote}
 In the lecture you heard about a concept called the error threshold. Assume for this subtask a wildtype genotype with fitness $f_{wt} > 1$ and all other genotypes have fitness $f_m = 1$. For a large sequence length, you can assume, that once a sequence is mutated, back-mutations are negligibly unlikely. Can you derive a condition based on $q$ and $f_{wt}$ for this error threshold? What happens when the threshold is crossed?
 \end{displayquote}
+
+Let's denote $wt$ as $0$ for the sake of saving my fingers (after typing half of the first equation, the author complained).
+
+The quasispecies equation is
+
+$$
+\dot{x} = xW - \phi x
+$$
+
+where
+
+$$
+W = \begin{bmatrix}
+  f_0q & 0 \\
+  f_0(1-q) & 1
+\end{bmatrix}
+$$
+The eigenvalues of $W$ are
+
+$$
+\lambda_1 = 1, \qquad \lambda_2 = f_0q
+$$
+If $f_0q < 1$, then the equilibrium should satisfy:
+
+$$
+W - I = \begin{bmatrix}
+  f_0q - 1 & 0 \\
+  f_0(1-q) & 0
+\end{bmatrix} \begin{bmatrix}
+  x_0^* \\
+  x_1^*
+\end{bmatrix} = 0 \Rightarrow x_0^* = 0, x_1^* = 1
+$$
+
+If $f_0q > 1$, then the equilibrium should satisfy:
+
+$$
+W - f_0qI = \begin{bmatrix}
+  0 & 0 \\
+  f_0(1-q) & 1 - f_0q
+\end{bmatrix} \begin{bmatrix}
+  x_0^* \\
+  x_1^*
+\end{bmatrix} = 0 \Rightarrow x_0^* = \frac{f_0q - 1}{f_0 - 1}, x_1^* = 1 - x_0^*
+$$
+The population ideally wants to populate wild type as much as possible as it has larger fitness, but it can only do so if $f_0 q > 1$ -- I assume this is the error threshold. As elucidated before, if the threshold is crossed, the population will be dominated by the low fitness mutant genotype and likely eventually die out.
+
