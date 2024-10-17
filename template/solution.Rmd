@@ -1,0 +1,10 @@
+---
+title: "Title"
+date:  "`r format(Sys.time(), '%B %d, %Y %H:%m')` (`r Sys.timezone()`)"
+author: "Minghang Li"
+mainfont: "KpRoman"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    extra_dependencies:  [ "amsmath", "amsthm", "amssymb", "cancel", "unicode-math", "csquotes" ]
+---
