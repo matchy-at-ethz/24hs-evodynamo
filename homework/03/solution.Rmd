@@ -204,15 +204,18 @@ library(patchwork)
 
 ```{r simulation}
 multiSimulate <- function(N, n) {
-  res <- foreach (iter = 1:n, .packages=c("foreach")) %dopar% {
+  res <- foreach (iter = 1:n, .packages = c("foreach")) %dopar% {
     i <- N / 2
     p <- i / N
     t <- 100
-
+    
     A <- rep(0, t)
     A[1] <- i
     foreach (j = 2:t) %do% {
-      A[j] <- sample(c(A[j-1] - 1, A[j-1] + 1, A[j-1]), 1, prob = c(p * (1 - p), p * (1 - p), p^2 + (1 - p)^2), size = 1)
+      A[j] <- sample(c(A[j - 1] - 1, A[j - 1] + 1, A[j - 1]),
+                     1,
+                     prob = c(p * (1 - p), p * (1 - p), p ^ 2 + (1 - p) ^ 2),
+                     size = 1)
       if (A[j] < 0) {
         A[j] <- 0
       } else if (A[j] > N) {
@@ -226,6 +229,7 @@ multiSimulate <- function(N, n) {
 ```
 
 ```{r run_simulations}
+set.seed(114514)
 N <- c(10, 100)
 n <- 1000
 
@@ -256,36 +260,69 @@ analytical_var_N10 <- data.frame(
 # Create the plot
 lines_plot <- ggplot() +
   # Plot individual lines
-  geom_line(data = df_N10, aes(x = x, y = value, group = group),
-            color = "grey", size = 1, alpha = 0.5) + # Set alpha for transparency
-  geom_hline(yintercept = analytical_mean_N10, color = "red", linetype = "dashed", size = 1) +
-  geom_line(data = var_df_N10, aes(x = x, y = mean), color = "magenta", size = 1) +
-  # geom_line(data = var_df_N10, aes(x = x, y = var), color = "blue", size = 1) +
-  # geom_line(data = analytical_var_N10, aes(x = t, y = variance), color = "green", size = 1) +
-  labs(title = "Change of Allele A count (N=10)",
-       x = "Generations (1 to 100)",
+  geom_line(
+    data = df_N10,
+    aes(x = x, y = value, group = group),
+    color = "grey",
+    linewidth = 1,
+    linewidth = 0.5
+  ) + # Set alpha for transparency
+  geom_hline(
+    yintercept = analytical_mean_N10,
+    color = "red",
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_line(
+    data = var_df_N10,
+    aes(x = x, y = mean),
+    color = "magenta",
+    linewidth = 1
+  ) +
+  labs(title = "Change of Allele A count (N=10)", 
+       x = "Generations (1 to 100)", 
        y = "Allele A count") +
-    theme(legend.position = "none",
-        panel.grid.minor = element_blank(),
-        panel.border = element_rect(color = "black", fill = NA, size = 0.5),
-        axis.text = element_text(size = 10),
-        axis.title = element_text(size = 12, face = "bold"),
-        plot.title = element_text(size = 14, face = "bold", hjust = 0.5))
+  theme(
+    legend.position = "none",
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(
+      color = "black",
+      fill = NA,
+      linewidth = 0.5
+    ),
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 12, face = "bold"),
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5)
+  )
 
 
 # Create the variance plot
 variance_plot <- ggplot() +
-  geom_line(data = var_df_N10, aes(x = x, y = var), color = "blue", size = 1) +
-  geom_line(data = analytical_var_N10, aes(x = t, y = variance), color = "green", size = 1) +
-  labs(title = "Variance at Each Generation",
-       x = "Generation (1 to 100)",
+  geom_line(data = var_df_N10,
+            aes(x = x, y = var),
+            color = "blue",
+            linewidth = 1) +
+  geom_line(
+    data = analytical_var_N10,
+    aes(x = t, y = variance),
+    color = "green",
+    linewidth = 1
+  ) +
+  labs(title = "Variance at Each Generation", 
+       x = "Generation (1 to 100)", 
        y = "Variance") +
-  theme(legend.position = "none",
-        panel.grid.minor = element_blank(),
-        panel.border = element_rect(color = "black", fill = NA, size = 0.5),
-        axis.text = element_text(size = 10),
-        axis.title = element_text(size = 12, face = "bold"),
-        plot.title = element_text(size = 14, face = "bold", hjust = 0.5))
+  theme(
+    legend.position = "none",
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(
+      color = "black",
+      fill = NA,
+      linewidth = 0.5
+    ),
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 12, face = "bold"),
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5)
+  )
 
 # Combine the plots side by side
 combined_plot <- lines_plot + variance_plot +
@@ -321,34 +358,69 @@ analytical_var_N100 <- data.frame(
 # Create the plot
 lines_plot <- ggplot() +
   # Plot individual lines
-  geom_line(data = df_N100, aes(x = x, y = value, group = group),
-            color = "grey", size = 1, alpha = 0.5) + # Set alpha for transparency
-  geom_hline(yintercept = analytical_mean_N100, color = "red", linetype = "dashed", size = 1) +
-  geom_line(data = var_df_N100, aes(x = x, y = mean), color = "magenta", size = 1) +
-  labs(title = "Change of Allele A count (N=100)",
-       x = "Generations (1 to 100)",
+  geom_line(
+    data = df_N100,
+    aes(x = x, y = value, group = group),
+    color = "grey",
+    linewidth = 1,
+    alpha = 0.5
+  ) + # Set alpha for transparency
+  geom_hline(
+    yintercept = analytical_mean_N100,
+    color = "red",
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_line(
+    data = var_df_N100,
+    aes(x = x, y = mean),
+    color = "magenta",
+    linewidth = 1
+  ) +
+  labs(title = "Change of Allele A count (N=100)", 
+       x = "Generations (1 to 100)", 
        y = "Allele A count") +
-    theme(legend.position = "none",
-        panel.grid.minor = element_blank(),
-        panel.border = element_rect(color = "black", fill = NA, size = 0.5),
-        axis.text = element_text(size = 10),
-        axis.title = element_text(size = 12, face = "bold"),
-        plot.title = element_text(size = 14, face = "bold", hjust = 0.5))
+  theme(
+    legend.position = "none",
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(
+      color = "black",
+      fill = NA,
+      linewidth = 0.5
+    ),
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 12, face = "bold"),
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5)
+  )
 
 
 # Create the variance plot
 variance_plot <- ggplot() +
-  geom_line(data = var_df_N100, aes(x = x, y = var), color = "blue", size = 1) +
-  geom_line(data = analytical_var_N100, aes(x = t, y = variance), color = "green", size = 1) +
-  labs(title = "Variance at Each Generation",
-       x = "Generation (1 to 100)",
+  geom_line(data = var_df_N100,
+            aes(x = x, y = var),
+            color = "blue",
+            linewidth = 1) +
+  geom_line(
+    data = analytical_var_N100,
+    aes(x = t, y = variance),
+    color = "green",
+    linewidth = 1
+  ) +
+  labs(title = "Variance at Each Generation", 
+       x = "Generation (1 to 100)", 
        y = "Variance") +
-  theme(legend.position = "none",
-        panel.grid.minor = element_blank(),
-        panel.border = element_rect(color = "black", fill = NA, size = 0.5),
-        axis.text = element_text(size = 10),
-        axis.title = element_text(size = 12, face = "bold"),
-        plot.title = element_text(size = 14, face = "bold", hjust = 0.5))
+  theme(
+    legend.position = "left",
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(
+      color = "black",
+      fill = NA,
+      linewidth = 0.5
+    ),
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 12, face = "bold"),
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5)
+  )
 
 # Combine the plots side by side
 combined_plot <- lines_plot + variance_plot +
