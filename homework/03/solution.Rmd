@@ -9,7 +9,7 @@ output:
     extra_dependencies:  [ "amsmath", "amsthm", "amssymb", "cancel", "unicode-math", "csquotes" ]
 ---
 
-This solution is organized in R Markdown, and the coding part is written in `python` via `reticulate`.
+This solution is organized in R Markdown, and the coding part is also written in R.
 
 # Problem 2: Neutral Moran process
 
@@ -193,8 +193,7 @@ Write a small simulation to check the results from (a) and (b). Use $N \in {10,1
 \end{displayquote}
 
 ---
-```{r setup_env}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup_env, echo=TRUE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(foreach)
 library(doParallel)
