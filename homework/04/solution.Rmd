@@ -1,0 +1,12 @@
+---
+title: "Evolutionary Dynamics Homework 4"
+date:  "`r format(Sys.time(), '%B %d, %Y %H:%m')` (`r Sys.timezone()`)"
+author: "Minghang Li"
+mainfont: "KpRoman"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    extra_dependencies:  [ "amsmath", "amsthm", "amssymb", "cancel", "unicode-math", "csquotes" ]
+---
+
+This solution is organized in R Markdown, and the coding part is also written in R.
