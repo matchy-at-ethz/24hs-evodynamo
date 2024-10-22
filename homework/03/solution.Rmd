@@ -1,5 +1,5 @@
 ---
-title: "Evoltutionary Dynamics Homework 3"
+title: "Evolutionary Dynamics Homework 3"
 date:  "`r format(Sys.time(), '%B %d, %Y %H:%m')` (`r Sys.timezone()`)"
 author: "Minghang Li"
 mainfont: "KpRoman"
@@ -207,7 +207,7 @@ multiSimulate <- function(N, n) {
     i <- N / 2
     p <- i / N
     t <- 100
-    
+
     A <- rep(0, t)
     A[1] <- i
     foreach (j = 2:t) %do% {
@@ -278,8 +278,8 @@ lines_plot <- ggplot() +
     color = "magenta",
     linewidth = 1
   ) +
-  labs(title = "Change of Allele A count (N=10)", 
-       x = "Generations (1 to 100)", 
+  labs(title = "Change of Allele A count (N=10)",
+       x = "Generations (1 to 100)",
        y = "Allele A count") +
   theme(
     legend.position = "none",
@@ -307,8 +307,8 @@ variance_plot <- ggplot() +
     color = "green",
     linewidth = 1
   ) +
-  labs(title = "Variance at Each Generation", 
-       x = "Generation (1 to 100)", 
+  labs(title = "Variance at Each Generation",
+       x = "Generation (1 to 100)",
        y = "Variance") +
   theme(
     legend.position = "none",
@@ -376,8 +376,8 @@ lines_plot <- ggplot() +
     color = "magenta",
     linewidth = 1
   ) +
-  labs(title = "Change of Allele A count (N=100)", 
-       x = "Generations (1 to 100)", 
+  labs(title = "Change of Allele A count (N=100)",
+       x = "Generations (1 to 100)",
        y = "Allele A count") +
   theme(
     legend.position = "none",
@@ -405,8 +405,8 @@ variance_plot <- ggplot() +
     color = "green",
     linewidth = 1
   ) +
-  labs(title = "Variance at Each Generation", 
-       x = "Generation (1 to 100)", 
+  labs(title = "Variance at Each Generation",
+       x = "Generation (1 to 100)",
        y = "Variance") +
   theme(
     legend.position = "left",
@@ -617,7 +617,5 @@ Explain the assumptions and implications of this result for inferring the diverg
 
 If $u$ is constant, then neutral mutations accumulate at a
  constant rate $R = u$, independent of population size.
- 
+
 The divergence time between species can be inferred by the number of mutations that have accumulated in the two species. The number of mutations is proportional to the divergence time, and the rate of mutation $u$.
-
-
