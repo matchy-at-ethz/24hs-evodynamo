@@ -371,7 +371,7 @@ which is extremely similar to that of the Wright-Fisher process.
 # Problem 3: Wave approximation
 
 \begin{displayquote}
- Consider the wave approximation of the Wright-Fisher model for cancer progression. Here, the growth of a clone with $j$ mutations is given by
+Consider the wave approximation of the Wright-Fisher model for cancer progression. Here, the growth of a clone with $j$ mutations is given by
 
 $$
  \dot{x}_j =sx_j(j−\langle j \rangle).
@@ -382,7 +382,103 @@ For small times, the average fitness $s\langle j \rangle = s \sum_j x_j$ can be 
 
 ## (a) Find the analytic solution for the initial condition $x_j(0) = 1/N$.
 
+Since the average fitness $s\langle j \rangle$ is constant, the above equation is equivalent to a simple first-order linear homogeneous ODE:
+
+$$
+\dot{x}_j = \alpha \cdot x_j,
+$$
+
+where
+
+$$
+\alpha = s(j - \langle j \rangle).
+$$
+
+The solution to that ODE is
+
+$$
+x_j(t) = A_0 e^{\alpha t}.
+$$
+
+Substitute the initial condition $x_j(0) = 1/N$ into the equation above, we have:
+
+$$
+x_j(t) = \frac{1}{N} \exp \left(s(j - \langle j \rangle) t \right).
+$$
+
 ## (b) The rate at which an additional mutation in a clone with $j$ mutations occurs is given by $udx_j(t)$. Find the time $\tau$ when the cumulative probability exceeds $1/N$.
 
-## (c) Compute the waiting time until the next mutation for a mutation rate $u = 10^{−7}$ per cell generation, $d = 80$ genes and a fitness advantage of $s = 1.15\%$ per mutation. Use that $j−\langle j\rangle \approx \sqrt{\ln N}$ with $N =10^7$ cells and assume a cell generation time of $1$ day.
+The rate at which an additional mutation in a clone with $j$ mutations occurs is given by $udx_j(t)$, which means at time $t$ there is expected to be $udx_j(t)$ event. The cumulative probability of the event is:
+
+$$
+P = \int_{t=0}^\tau udx_j(t)
+$$
+
+When it exceeds $1/N$, we have (denote $s(j - \langle j \rangle)$ as $A$ for simplicity):
+
+$$
+\begin{aligned}
+\frac{1}{N} &=\int_{t=0}^\tau udx_j(t) dt. \\
+\frac{1}{N} &= \int_{t=0}^\tau \frac{1}{N} u d \exp(At) dt \\
+1 &= ud \int_{t=0}^{\tau} \exp(At) dt\\
+1 &= \frac{ud}{A} \left[ \exp(At) \right]_{t=0}^{\tau} \\
+1 &= \frac{ud}{A} \left(
+  \exp(A\tau) - 1
+\right) \\
+\frac{A}{ud} + 1 &= \exp(A\tau) \\
+A \tau & =\ln\left(\frac{A + ud}{ud}\right)   \\
+\tau &= \frac{\ln\left(\frac{A + ud}{ud}\right)}{A}
+\end{aligned}
+$$
+
+To rewrite it in the desired way:
+
+$$
+\tau = \frac{
+  \ln \left( \frac{ s(j - \langle j \rangle) + ud}{ud}\right)
+}{s(j - \langle j \rangle)}
+$$
+
+## (c) Compute the waiting time until the next mutation.
+
+\begin{displayquote}
+Question settings: mutation rate $u = 10^{−7}$ per cell generation, $d = 80$ genes and a fitness advantage of $s = 1.15\%$ per mutation. Use that $j−\langle j\rangle \approx \sqrt{\ln N}$ with $N =10^7$ cells and assume a cell generation time of $1$ day.
+\end{displayquote}
+
+From the slides we know that the average time it takes until the next mutation appears is:
+
+$$
+\tau = \frac{\ln[s/ud]^2}{2s\ln N}
+$$
+
+From the equation in **(b)**, we have:
+
+$$
+\tau = \frac{\ln \left( \frac{s(j - \langle j \rangle) + ud}{ud} \right)}{s(j - \langle j \rangle)}
+\approx \frac{\ln \left( \frac{s\sqrt{\ln N} + ud}{ud} \right)}{s\sqrt{\ln N}}
+$$
+
+The author didn't really know what to calculate so chose to do both.
+
+```{r ini_vars}
+u <- 10^(-7)
+d <- 80
+s <- 0.0115
+N <- 10^7
+```
+
+```{r t_slides}
+tau_slides <- log(s / u * d)^2 / (2 * s * log(N))
+```
+
+The waiting time until the next mutation is `r round(tau_slides, 2)` days.
+
+```{r t_b}
+A <- s * sqrt(log(N))
+tau_b <- log((A + u*d)/u*d) / A
+```
+
+The waiting time until the next mutation is `r round(tau_b, 2)` days.
+
+(Feel free to give deductions and comments as I really didn't understand this part.)
 
