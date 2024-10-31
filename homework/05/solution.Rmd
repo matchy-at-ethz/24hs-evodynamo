@@ -112,6 +112,31 @@ that is, $X(t) | X(t −1) = i$ is binomially distributed with parameter $p = i/
 
 ## (a) Compute the conditional expectation $E[X(t) | X(0) = i]$.
 
+We know that
+
+$$
+X(t) = j | X(t-1) = i \sim \text{Binomial}(N, i/N)
+$$
+
+so we have 
+
+$$
+E[X(t)| X(t - 1) = i] = N \cdot \frac{i}{N} = i = X(t - 1).
+$$
+i.e. $E[X(t)|X(t-1)] = X(t-1)$.
+
+By the law of total expectation, we have:
+
+$$
+\begin{aligned}
+E_{X(t)}[X(t) | X(0) = i] &= E_{X(t-1)}[E_{X(t)}[X(t) | X(t-1)] | X(0) = i] \\
+&= E_{X(t-1)}[X(t-1) | X(0) = i] \\
+&= \ldots \\
+&= E_{X(1)}[X(1) | X(0) = i] \\
+&= i.
+\end{aligned}
+$$
+
 ## (b) Compute the conditional variance $Var[X(t) | X(0) = i]$.
 
 \begin{displayquote}
@@ -126,7 +151,116 @@ where $V_1 = Var[X(1) | X(0) = i]$. You can then use the expression above to der
 
 ---
 
+Similarly, since we have
+
+$$
+X(t) = j | X(t-1) = i \sim \text{Binomial}(N, i/N),
+$$
+then we have
+
+$$
+Var[X(t)|X(t-1) = i] = N \cdot \frac{i}{N} \cdot \left(1 - \frac{i}{N}\right) = i \left(1 - \frac{i}{N}\right).
+$$
+
+Since the mean of the Wight-Fisher process is stationary (as shown in **(a)**), we have $\forall t > 0$, $Var[X(t)|X(t-1) = i] = Var[X(1)|X(0) = 1] = V_1$.
+
+By the law of total variance, we have (similar to homework 2, all the $E$ and $Var$ on the right hand side of the equation are subscripted by $X(t-1)$. The author omitted them out of laziness):
+
+$$
+\begin{aligned}
+Var_{X(t)}[X(t)]
+&= E[Var[X(t)|X(t-1)]] + Var[E[X(t)|X(t-1)]] \\
+&= E\left[
+  X(t-1) \left(1 - \frac{X(t-1)}{N}\right)
+\right] + Var[X(t-1)] \\
+&= E[X(t-1)] - \frac{E[X(t-1)^2]}{N} + Var[X(t-1)] \\
+&= E[X(t-1)] - \frac{E[X(t-1)]^2 + Var[X(t-1)]}{N} + Var[X(t-1)] 
+   &(E[A^2] = Var[A] + E[A]^2)\\
+&= E[X(t-1)]\left(1 - \frac{E[X(t-1))}{N}\right) + \left(1 - \frac{1}{N}\right) Var[X(t-1)]
+\end{aligned}
+$$
+
+Applying the fact that $E[X(t) | X(0) = i] = i \forall t$, we have:
+
+$$
+\begin{aligned}
+Var_{X(t)}[X(t) | X(0) = i]
+&= i \cdot \left(1 - \frac{i}{N}\right) + \left(1 - \frac{1}{N}\right) Var[X(t-1) | X(0) = i]
+\end{aligned}
+$$
+
+Recall that
+
+$$
+V_1 = Var[X(1)|X(0) = i] = i \left(1 - \frac{i}{N}\right),
+$$
+
+we can rewrite the equation above as:
+
+$$
+Var[X(t)|X(0) = i] = V_1 + \left(1 - \frac{1}{N}\right) Var[X(t-1)|X(0) = i].
+$$
+
 ## (c) Derive an approximation for $Var[X(t) | X(0) = i]$ for large population size $N$. Compare the variance of the Wright Fisher process to the variance of the Moran process, explain the difference(s).
+
+Let's denote $Var[X(t)|X(0) = i]$ as $V_t$ for simplicity. Then we have:
+
+$$
+V_t = V_1 + \left(1 - \frac{1}{N}\right) V_{t-1}.
+$$
+
+We can rewrite it into:
+
+$$
+V_t - a = b(V_{t-1} - a),
+$$
+
+where
+
+$$
+\left\{
+\begin{aligned}
+&a = \frac{V_1}{1/N} \\
+&b = 1 - \frac{1}{N}.
+\end{aligned}
+\right.
+$$
+From this it follows that (denoting $1/N$ as $M$ for simplicity):
+
+$$
+\begin{aligned}
+V_t - a &= b^{t-1}(V_{t-1} - a) \\
+V_t - \frac{V_1}{M} &= (1 - M)^{t-1} \left(V_1 - \frac{V_1}{M}\right) \\
+V_t &= V_1(1-M)^{t-1} \frac{M-1}{M} + V_1 \frac{1}{M} \\ 
+V_t &= V_1 \frac{1 - (1 - M)^t}{M}
+\end{aligned}
+$$
+
+For large population size $N \to \infty$, we have $M = 1/N \to 0$, then we have:
+
+$$
+\begin{aligned}
+V_t &= V_1 \cdot \lim_{M \to 0 } \frac{1 - (1-M)^t}{M} \\
+&= V_1 \cdot \lim_{M \to 0} \frac{1 - (1 - tM + O(M^2))}{M} \qquad (\text{Taylor expansion})\\
+&= V_1 \cdot t.
+\end{aligned}
+$$
+
+Rewrite it in the desired form:
+
+$$
+Var[X(t)|X(0) = i] = V_1 \cdot t.
+$$
+
+Recall from homework 2 (and thanks for all the hints in homework 2 that made the author possible to solve homework 5), the Moran variance of Moran process is (note that now $V_1 = 2(i/N)(1-i/N)$ for Moran process):
+
+$$
+Var[X(t) | X(0) = i] = V_1 \cdot \frac{1 - (1 - 2/N^2)^t}{2/N^2},
+$$
+
+which has very similar form to that of the Wright-Fisher process, and for large population size $N$, we also have $Var[X(t) | X(0) = i] = V_1 \cdot t$.
+
+The difference between the two processes is that the Moran process has a factor of $2/N^2$ in the denominator, which makes the variance of the Moran process smaller than that of the Wright-Fisher process. This is natural because one generation in Wright-Fisher process is $N$ times larger than that in the Moran process. The variance is not exactly $N$ times larger for Wright-Fisher process, though, since the Moran process is modelling more than merely genetic drift but also selection and competition.
 
 ## (d) See below.
 
@@ -142,6 +276,97 @@ and hence decreases exponentially at rate $1/N$. Compare this behaviour with the
 \end{displayquote}
 
 ---
+
+By definition,
+
+$$
+\begin{aligned}
+H_t &= 2\cdot \frac{X(t)}{N} \cdot \left(1 - \frac{X(t)}{N} \right) \\
+&= 2 \cdot \left( \frac{X(t)}{N} - \frac{X(t)^2}{N^2} \right)
+\end{aligned}
+$$
+
+With $X_0 = i$, $H_0 = 2 \cdot i/N\cdot (1- i/N)$.
+
+$$
+\begin{aligned}
+E[H_t] &= E\left[
+  2 \cdot \left( \frac{X(t)}{N} - \frac{X(t)^2}{N^2}\right)
+\right] \\
+&= 2 \cdot \left(
+  \frac{E[X(t)]}{N} - \frac{E[X(t)^2]}{N^2}
+\right) \\
+&= 2 \cdot \left(
+  \frac{E[X(t)]}{N} - \frac{Var[X(t)] + E[X(t)]^2}{N^2}
+\right) 
+\end{aligned}
+$$
+
+Based on previous knowledge, we have
+
+$$
+E[X(t)|X_0 = i] = i, \qquad Var[X(t)|X_0 = i] = V_1 \cdot \frac{1 - (1 - 1/N)^t}{1/N},
+$$
+
+where $V_1 = N \cdot i/N \cdot (1 - i/N)$.
+
+Then we have:
+
+$$
+\begin{aligned}
+E[H_t|X_0 = i] 
+&= 2 \cdot \left(
+  \frac{i}{N} - \frac{i^2}{N^2} - \frac{V_1 \cdot \frac{1 - (1 - 1/N)^t}{1/N}}{N^2}
+\right) \\
+&\text{(Denote } i/N \text{ as } p \text{ for simplicity)} \\
+&= 2 \cdot \left(
+  p(1-p) -
+  \frac{N^2p(1-p) \cdot (1 - (1 - 1/N)^t)}{N^2} 
+\right)\\
+&= 2 \left(
+  p(1-p) - 
+  p(1-p) + p(1-p) (1 - 1/N)^t
+\right) \\
+&= 2p(1-p) \cdot (1 - 1/N)^t.
+\end{aligned}
+$$
+
+As by definition,
+
+$$
+H_0 |_{X_0 = i} = 2 \cdot \frac{i}{N} \cdot \left(1 - \frac{i}{N}\right) = 2p(1-p).
+$$
+
+We can rewrite the above equation into the desired form:
+
+$$
+E[H_t | X_0 = i] = H_0|_{X_0 = i} \cdot (1 - 1/N)^t. = H_0(i) \cdot (1 - 1/N)^t.
+$$
+
+For the Moran process, the derivation process is similar, we just substitute $1/N$ to $2/N^2$ and $V_1 = 2(i/N)(1-i/N) = 2p(1-p)$
+
+$$
+\begin{aligned}
+E[H_t|X_0 = i] 
+&= 2 \cdot \left(
+  p(1-p) - 
+  \frac{2p(1-p) \cdot \frac{1 - (1 - 2/N^2)^t}{2/N^2}}{N^2}
+\right) \\
+&= 2 \cdot \left(
+  p(1-p) -
+  p(1-p) \cdot (1 - (1 - 2/N^2)^t)
+\right) \\
+&= 2p(1-p)(1 - 2/N^2)^t
+\end{aligned}
+$$
+
+Similarly, we also have $H_0|_{X_0 = i} = 2p(1-p)$ for Moran process, then we have:
+
+$$
+E[H_t|X_0=i] = H_0(i) \cdot (1 - 2/N^2)^t,
+$$
+
+which is extremely similar to that of the Wright-Fisher process.
  
 # Problem 3: Wave approximation
 
