@@ -1,0 +1,227 @@
+---
+title: "Evolutionary Dynamics Homework 6"
+date:  "`r format(Sys.time(), '%B %d, %Y %H:%m')` (`r Sys.timezone()`)"
+author: "Minghang Li"
+mainfont: "KpRoman"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    extra_dependencies:  [ "amsmath", "amsthm", "amssymb", "cancel", "unicode-math", "csquotes" ]
+---
+
+# Problem 1: One-dimensional Fokker-Planck equation
+
+\begin{displayquote}
+Consider the one-dimensional Fokker-Planck equation with constant coefficients,
+
+
+\begin{equation}
+\label{eq:one-dim-fokker-planck}
+\partial_t \psi(p,t) = −m \partial_p \psi(p,t)
++ \frac{v}{2} \partial_p^2 \psi(p,t),
+\end{equation}
+
+with $p \in \mathbb{R}, v > 0$.
+\end{displayquote} 
+
+## (a) See below.
+
+\begin{displayquote}
+Show that for vanishing selection, $m = 0$,
+ 
+\begin{equation}
+\label{eq:solution}
+\psi (p,t) = 
+  \frac{1}{\sqrt{2 \pi vt}} 
+  \exp\left(− \frac{p^2}{2vt} \right)
+\end{equation}
+
+solves the Fokker-Planck equation. To which initial condition does this solution correspond?
+ \end{displayquote}
+
+---
+
+For vanishing selection $m = 0$, the Fokker-Planck equation can be written as simply
+
+\begin{equation}
+\label{eq:vanishing-selection}
+\partial_t \psi(p, t) = \frac{v}{2} \partial_p^2 \psi(p, t)
+\end{equation}
+
+Let's compute the left-hand side and the right-hand side to show that the solution is correct.
+
+### LHS of \eqref{eq:vanishing-selection}
+
+\begin{equation}
+\label{eq:LHS}
+\begin{aligned}
+\partial_t \psi(p, t) &= \partial_t \left( \frac{1}{\sqrt{2 \pi vt}} \exp\left(− \frac{p^2}{2vt} \right) \right) \\
+&= - \frac{1}{\sqrt{2 \pi vt} \cdot 2t} \cdot \exp \left(-\frac{p^2}{2vt} \right) 
++ \frac{1}{\sqrt{2 \pi vt}} \cdot \frac{p^2}{2vt^2} \cdot \exp \left(-\frac{p^2}{2vt} \right) \\
+&= \frac{p^2 - vt}{2vt^2} \cdot 
+  \frac{1}{\sqrt{2 \pi vt}} \cdot 
+  \exp \left( -\frac{p^2}{2vt}\right)
+\end{aligned}
+\end{equation}
+
+### RHS of \eqref{eq:vanishing-selection}
+
+\begin{equation}
+\label{eq:RHS}
+\begin{aligned}
+\frac{v}{2} \partial_p^2 \psi(p, t) 
+&= \frac{v}{2}\partial_p \left(
+  \partial_p \left( 
+    \frac{1}{\sqrt{2 \pi vt}} \exp\left(− \frac{p^2}{2vt} \right) 
+  \right) 
+\right) \\
+&= \frac{v}{2 \sqrt{2 \pi vt}} \partial_p \left(
+  \partial_p \left( \exp\left(− \frac{p^2}{2vt} \right) \right) 
+\right) \\
+&= \frac{v}{2 \sqrt{2 \pi vt}} \partial_p \left(
+  \left( -\frac{p}{vt} \right) \cdot \exp\left(− \frac{p^2}{2vt} \right)
+\right) \\
+&= \frac{v}{2 \sqrt{2 \pi vt}} \cdot \left(
+  -\frac{1}{vt} \exp\left(− \frac{p^2}{2vt} \right) +
+  \frac{p^2}{v^2t^2} \cdot \exp\left(− \frac{p^2}{2vt} \right)
+\right) \\
+&= - \frac{1}{\sqrt{2 \pi vt} \cdot 2t} \cdot \exp \left(-\frac{p^2}{2vt} \right) 
++ \frac{1}{\sqrt{2 \pi vt}} \cdot \frac{p^2}{2vt^2} \cdot \exp \left(-\frac{p^2}{2vt} \right) \\
+&= \frac{p^2 - vt}{2vt^2} \cdot 
+  \frac{1}{\sqrt{2 \pi vt}} \cdot 
+  \exp \left( -\frac{p^2}{2vt}\right)
+\end{aligned}
+\end{equation}
+
+It's clear that \eqref{eq:LHS} equals \eqref{eq:RHS}, so \eqref{eq:solution} is indeed the solution.
+
+To investigate the initial condition, we need to examine the behavior of $\psi (p, t)$ as $t \to 0^+$. As $t \to 0^+$, we have:
+
+- The exponential term $\exp(-p^2 / (2vt))$ approaches:
+  - $0, \forall p \neq 0$ becuase $-p^2 / (2vt) \to -\infty$
+  - $1$ for $p = 0$.
+- The prefactor $\frac{1}{\sqrt{2 \pi vt}}$ approaches $\infty$ for $t \to 0^+$.
+
+This behavior is consistent with the Dirac delta function $\delta(p)$. Hence, the initial condition is 
+
+$$
+\psi (p, 0) = \delta(p),
+$$
+where $\delta(p)$ is the Dirac delta function defined as
+
+$$
+\delta(p) = \left\{\begin{aligned}
+&0, && \text{if } p \neq 0, \\
+&\infty, && \text{if } p = 0.
+\end{aligned}
+\right.
+$$
+
+This means the initial distribution is concentrated at $p = 0$, which represents the fact that the starting population is initially at a single allele frequency.
+
+## (b) Construct a solution for constant selection, $m \neq 0$, by substituting $z = p − mt$ for $p$ in \eqref{eq:one-dim-fokker-planck} . What is the mean and variance?
+
+Let $z(p, t) = p - mt$, then we have $\partial_p z(p, t) = 1$, and $\partial_t z(p, t) = -m$. Substitute $z(p,t)$ into $\psi (p,t)$ to obtain $\psi(z, t)$, using the chain rule, we have
+
+\begin{equation}
+\label{eq:psi_partial_t}
+\begin{aligned}
+\frac{\partial \psi(p, t)}{\partial t} &=
+  \frac{\partial \psi(z, t)}{\partial z} \frac{\partial z}{\partial t} + \frac{\partial \psi(z, t)}{\partial t} \frac{\cancel{\partial t}}{\cancel{\partial t}} \\
+  &= -m \frac{\partial \psi(z, t)}{\partial z} + \frac{\partial \psi(z, t)}{\partial t} \\
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\label{eq:psi_partial_p}
+\begin{aligned}
+\frac{\partial \psi(p, t)}{\partial p} &=
+  \frac{\partial \psi(z, t)}{\partial z} \frac{\partial z}{\partial p} \\
+  &= \frac{\partial \psi(z, t)}{\partial z}
+\end{aligned}
+\end{equation}
+
+Using \eqref{eq:psi_partial_t} and \eqref{eq:psi_partial_p}, we can rewrite the Fokker-Planck equation:
+
+\begin{equation}
+\label{eq:similar_to_3}
+\begin{aligned}
+\frac{\partial \psi (p, t)}{\partial t} &= -m \frac{\partial \psi (p, t)}{\partial p} + \frac{v}{2} \frac{\partial^2 \psi (p, t)}{\partial p^2} \\
+\cancel{-m \frac{\partial \psi (z, t)}{\partial z}} + 
+\frac{\partial \psi (z, t)}{\partial t} 
+  &= \cancel{-m \frac{\partial \psi (z, t)}{\partial z}}
+   + \frac{v}{2} \frac{\partial^2 \psi (z, t)}{\partial z^2} \\
+\frac{\partial \psi (z, t)}{\partial t} &= 
+  \frac{v}{2} \frac{\partial^2 \psi (z, t)}{\partial z^2}
+\end{aligned}
+\end{equation}
+
+Voila! This equation \eqref{eq:similar_to_3} has exactly the same form as \eqref{eq:vanishing-selection}, so the solution is of the form of \eqref{eq:solution} also. We use the same form and subsitute $z = p - mt$ into it:
+
+$$
+\begin{aligned}
+\psi(z, t) &= \frac{1}{\sqrt{2 \pi vt}} \exp\left(− \frac{z^2}{2vt} \right) \\
+\psi(p, t) &= \frac{1}{\sqrt{2 \pi vt}} \exp\left(− \frac{(p - mt)^2}{2vt} \right) \sim \mathcal{N}(mt, vt)
+\end{aligned}
+$$
+
+Hence, the mean is $mt$ and the variance is $vt$.
+
+# Problem 2: Diffusion approximation of the Moran process
+
+\begin{displayquote}
+Derive a diffusion approximation for the Moran process of two species. Assume the first species has a small selective advantages.
+\end{displayquote}
+
+## (a) See below.
+
+\begin{displayquote}
+The general definition for the drift coefficient is
+
+\begin{equation}
+\label{eq:drift_coeff}
+M(p)=E[X(t)−X(t−1)|X(t−1)=i]/N,
+\end{equation}
+
+where $p=i/N$ and $X(t)$ denotes the abundance of the first allele. Evaluate this expression for the Moran process with selection. Show that this yields the result for the Wright-Fisher process from the lecture, divided by $N$.
+\end{displayquote}
+
+---
+
+
+## (b) By a similar argument calculate the diffusion coefficient $V(p)$.
+
+## (c)Useyour results from(a) and(b) in the forwardKolmogorovequationtopresent adiffusion
+ equationfortheMoranmodel. (1point)
+
+## (d)Nowassumethats≪1.Approximateyourresultsfrom(a)and(b)andusethegeneralexpression
+ forthefixationprobabilityρ(p0)toshowthatthefixationprobabilityisgivenby: (1point)
+ ρ(p0=1/N)= 1−e−s
+ 1−e−Ns . (3)
+
+## (e) Takethelimittoderivearesultforthefixationprobabilityofaneutralallele,s=0.Evaluate(3)
+ forN=10andN=1000forbothpositive,s=2%,andnegativeselection,s=−2%,respectively.
+ Compareyourresultswithρ1oftheexactMoranprocess. (1point)
+ 1
+Problem3:Absorptiontimeinthediffusionapproximation
+ Inthediffusionapproximationofaprocesswithabsorbingstates0and1theexpectedfixationtime,
+ conditionedonabsorptioninstate1,reads:
+ τ1(p0)=2(S(1)−S(0)) 1
+ p0
+ ρ(p)(1−ρ(p))
+ e−A(p)V(p) dp+1−ρ(p0)
+ ρ(p0)
+ p0
+ 0
+ ρ(p)2
+ e−A(p)V(p)dp ,
+ whereρ(p)denotesthefixationprobability,A(p)= p
+ 0
+ 2M(p)/V(p)dp,andS(p)= p
+ 0
+ exp(−A(p))dp.
+ (a)Calculatetheconditionalexpectedwaitingtimeforfixation,τ1(p0),ofanalleleoffrequencyp0
+ intheneutralWright-Fisherprocess.Approximatetheresultforsmallp0. (1point)
+ (b)Computeτ0, theconditionalexpectedwaitingtimeuntilextinction(absorptioninstate0) inthe
+ neutralWright-Fisherprocess.Alsoderivetheunconditionedexpectedwaitingtime¯ τuntileither
+ fixationorextinction
