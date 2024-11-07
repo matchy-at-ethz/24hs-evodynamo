@@ -188,40 +188,147 @@ where $p=i/N$ and $X(t)$ denotes the abundance of the first allele. Evaluate thi
 
 ---
 
+From lecture 3 we know that for a _neutral_ Moran process we have transition probabilities:
+
+- $P_{i,i+1} = p(1-p)$
+- $P_{i, i-1} = (1-p)p$
+- $P_{i,i} = p^2 + (1-p)^2$
+
+However, since the first species has a small selective advantage (denoted as $s$ hereafter), we need to modify the transition probabilities. We have:
+
+- $P_{i,i+1} = (p(1 + s)/(p(1 + s) + (1-p))) \cdot (1-p) = (p(1+s) / (1 + sp)) \cdot (1-p)$
+- $P_{i, i-1} = (1-p)/(1 + sp) \cdot p$
+- $P_{i,i} = 1 - P_{i,i+1} - P_{i,i-1}$
+
+And the expectation derived from the transition probabilities is:
+
+\begin{equation}
+\label{eq:expectation}
+\begin{aligned}
+E[X(t)|X(t-1) = i] 
+  &= i \cdot P_{i,i} + (i+1) \cdot P_{i,i+1} + (i-1) \cdot P_{i,i-1} \\
+  &= i \cdot (1 - P_{i,i+1} - P_{i,i-1}) + (i+1) \cdot P_{i,i+1} + (i-1) \cdot P_{i,i-1} \\
+  &= i + P_{i,i+1} - P_{i,i-1} \\
+  &= i + \frac{p(1+s)}{1+sp} \cdot (1-p) - \frac{1-p}{1 + sp} \cdot p \\
+  &= i + \frac{sp(1-p)}{1+sp}
+\end{aligned}
+\end{equation}
+
+Using \eqref{eq:expectation} and \eqref{eq:drift_coeff}, we can calculate the drift coefficient $M(p)$:
+
+\begin{equation}
+\label{eq:drift_coefficient_simplified}
+\begin{aligned}
+M(p) &= \frac{E[X(t)−X(t−1)|X(t−1)=i]}{N} \\
+&= \frac{E[X(t)|X(t−1)=i] - E[X(t−1)|X(t−1)=i]}{N} \\
+&= \frac{E[X(t)|X(t-1)=i] - i}{N} \\
+&= \left( i + \frac{sp(1-p)}{1+sp} - i \right)/N \\
+&= \frac{sp(1-p)}{N(1+sp)}
+\end{aligned}
+\end{equation}
+
+From slide 33, we know that the drift coefficient for the Wright-Fisher process is:
+
+$$
+M_{WF}(p) = \frac{sp(1-p)}{1+sp},
+$$
+
+and \eqref{eq:drift_coefficient_simplified} is exactly the result for the Wright-Fisher process divided by $N$.
 
 ## (b) By a similar argument calculate the diffusion coefficient $V(p)$.
 
-## (c)Useyour results from(a) and(b) in the forwardKolmogorovequationtopresent adiffusion
- equationfortheMoranmodel. (1point)
+From slides, we have
 
-## (d)Nowassumethats≪1.Approximateyourresultsfrom(a)and(b)andusethegeneralexpression
- forthefixationprobabilityρ(p0)toshowthatthefixationprobabilityisgivenby: (1point)
- ρ(p0=1/N)= 1−e−s
- 1−e−Ns . (3)
+\begin{equation}
+\label{eq:variance}
+\begin{aligned}
+V(p) &= E\left[Var[p(t+1)] | p(t)\right] \\
+     &= \frac{1}{N^2} E\left[Var[X(t+1)|X(t)]\right]
+\end{aligned}
+\end{equation}
 
-## (e) Takethelimittoderivearesultforthefixationprobabilityofaneutralallele,s=0.Evaluate(3)
- forN=10andN=1000forbothpositive,s=2%,andnegativeselection,s=−2%,respectively.
- Compareyourresultswithρ1oftheexactMoranprocess. (1point)
- 1
-Problem3:Absorptiontimeinthediffusionapproximation
- Inthediffusionapproximationofaprocesswithabsorbingstates0and1theexpectedfixationtime,
- conditionedonabsorptioninstate1,reads:
- τ1(p0)=2(S(1)−S(0)) 1
- p0
- ρ(p)(1−ρ(p))
- e−A(p)V(p) dp+1−ρ(p0)
- ρ(p0)
- p0
- 0
- ρ(p)2
- e−A(p)V(p)dp ,
- whereρ(p)denotesthefixationprobability,A(p)= p
- 0
- 2M(p)/V(p)dp,andS(p)= p
- 0
- exp(−A(p))dp.
- (a)Calculatetheconditionalexpectedwaitingtimeforfixation,τ1(p0),ofanalleleoffrequencyp0
- intheneutralWright-Fisherprocess.Approximatetheresultforsmallp0. (1point)
- (b)Computeτ0, theconditionalexpectedwaitingtimeuntilextinction(absorptioninstate0) inthe
- neutralWright-Fisherprocess.Alsoderivetheunconditionedexpectedwaitingtime¯ τuntileither
- fixationorextinction
+To derive $Var[X(t+1)|X(t)]$ again, we first derive $Var[X(t+1)|X(t) = i]$:
+
+\begin{equation}
+\label{eq:variance_given_i}
+\begin{aligned}
+Var[X(t+1) | X(t) = i] 
+  &= Var[X(t)] + Var[X(t+1) - X(t) | X(t) = i] \\
+  &= 0 + E[(X(t+1) - X(t))^2 | X(t) = i] - E[X(t+1) - X(t)| X(t) = i]^2 \\
+  &= (i-1-i)^2 \cdot P_{i,i-1} + (i+1-i)^2 \cdot P_{i,i+1} + (i-i)^2 \cdot P_{i,i} 
+     - E[X(t+1) - X(t) | X(t) = i]^2 \\
+  &= P_{i,i-1} + P_{i,i+1} - E[X(t+1) | X(t) = i]^2 \\
+  &= \frac{p(1-p)}{1+sp} + \frac{(1+s)p(1-p)}{1+sp} - \left(\frac{sp(1-p)}{1+sp}\right)^2 \\
+  &= \frac{p(1-p)(s + 2)}{1+sp} - \left(\frac{sp(1-p)}{1+sp}\right)^2 \\
+  &= p(1-p) \left( 1 + \frac{1+s}{(1+sp)^2} \right)
+\end{aligned}
+\end{equation}
+
+As \eqref{eq:variance_given_i} is not related to $i$ at all, we can say that the expression of $Var[X(t+1)|X(t)]$ is the same as \eqref{eq:variance_given_i}. Plug \eqref{eq:variance_given_i} back to \eqref{eq:variance}, we obtain the diffusion coefficient:
+
+\begin{equation}
+\label{eq:diffusion_coefficient}
+V(p) = \frac{1}{N^2} \left(
+  p(1-p) \left( 1 + \frac{1+s}{(1+sp)^2} \right)
+\right)
+\end{equation}
+
+
+## (c) Use your results from (a) and(b) in the forward Kolmogorov equation to present a diffusion equation for the Moran model.
+
+Plug in \eqref{eq:drift_coefficient_simplified} and \eqref{eq:diffusion_coefficient} into the forward Kolmogorov equation:
+
+$$
+\begin{aligned}
+\frac{\partial \psi(p, t)}{\partial t}
+  &= - \frac{\partial}{\partial p} \left[
+      \psi (p, t) M(p)
+    \right] +
+    \frac{1}{2} \frac{\partial^2}{\partial p^2} \left[
+      \psi (p, t) V(p)
+    \right] \\
+  &= - \frac{\partial}{\partial p} \left[
+      \psi (p, t) \frac{sp(1-p)}{N(1+sp)}
+    \right] +
+    \frac{1}{2} \frac{\partial^2}{\partial p^2} \left[
+      \psi (p, t) \frac{1}{N^2}p(1-p)\left(1 + \frac{1+s}{(1+sp)^2}\right)
+    \right]
+\end{aligned}
+$$
+
+## (d) See below.
+
+\begin{displayquote}
+Now assume that $s \leq 1$. Approximate your results from (a) and (b) and use the general expression for the fixation probability $\rho(p_0)$ to show that the fixation probability is given by:
+
+\begin{equation}
+\label{eq:fixation_probability}
+\rho(p_0 = 1/N) = \frac{1-e^{-s}}{1-e^{-Ns}}
+\end{equation}
+\end{displayquote}
+
+## (e) Take the limit to derive a result for the fixation probability of a neutral allele, $s=0$. Evaluate \eqref{eq:fixation_probability} for $N=10$ and $N=1000$ for both positive and negative selection, $s=2\%$, and $s=-2\%$, respectively. Compare your result with $\rho_1$ of the exact Moran process.
+
+
+# Problem 3: Absorption time in the diffusion approximation
+
+\begin{displayquote}
+In the diffusion approximation of a process with absorbing states $0$ and $1$ the expected fixation time, conditioned on absorption in state $1$,reads:
+
+$$
+\tau_1(p_0) = 2(S(1) - S(0)) 
+  \left(
+    \int_{p_0}^1 \frac{\rho(p)(1-\rho(p))}{e^{-A(p)}V(p)} dp + 
+    \frac{1 - \rho(p_0)}{\rho(p_0)} \int_{0}^{p_0} \frac{\rho(p)^2}{e^{-A(p)}V(p)} dp
+  \right)
+$$
+
+ where $\rho(p)$ denotes the fixation probability, 
+ $$
+ A(p)= \int_0^p \frac{2M(p)}{V(p)}d p, \quad \text{and} \quad S(p) = \exp(-A(p)) dp.
+ $$
+\end{displayquote}
+
+## (a) Calculate the _conditional expected waiting time for fixation_, $\tau_1(p_0)$, of an allele of frequency $p_0$ in the neutral Wright-Fisher process. Approximate the result for small $p_0$.
+ 
+## (b) Compute $\tau_0$, the conditional expected waiting time until _extinction_ (absorption in state $0$) in the neutral Wright-Fisher process. Also derive the unconditioned expected waiting time $\bar{\tau}$ until either fixation or extinction.
