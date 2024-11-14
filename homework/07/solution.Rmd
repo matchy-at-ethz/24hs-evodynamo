@@ -1,0 +1,325 @@
+---
+title: "Evolutionary Dynamics Homework 7"
+date:  "`r format(Sys.time(), '%B %d, %Y %H:%m')` (`r Sys.timezone()`)"
+author: "Minghang Li"
+mainfont: "KpRoman"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    extra_dependencies:  [ "amsmath", "amsthm", "amssymb", "cancel", "unicode-math", "csquotes" ]
+bibliography: reference.bib
+csl: ieee.csl
+---
+
+# Problem 1: Lotka-Volterra equation
+
+\begin{displayquote}
+The Lotka-Volterra equation is a famous example of theoretical ecology. Originally, it describes the dynamics of prey fish and predators. Let $x$ denote the abundance of prey and y the number of predators. The dynamics is then given by
+
+\begin{equation}
+\label{eq:lokta-volterra}
+\begin{aligned}
+&\dot{x} =x(a−by) \\
+&\dot{y} =y(−c+dx)
+\end{aligned}
+\end{equation}
+
+with positive coefficients $a$, $b$, $c$, and $d$.
+\end{displayquote}
+
+## (a) What are the fixed points $(x^*,y^*)$ of this system?
+
+The fixed points are the solutions to the following equations:
+
+$$
+\begin{aligned}
+&0 =x(a−by) \\
+&0 =y(−c+dx)
+\end{aligned}
+$$
+
+It's clear that we have solutions:
+
+$$
+\left\{
+\begin{aligned}
+&x^* = 0 \\
+&y^* = 0
+\end{aligned}
+\right., \quad \text{and} \quad
+\left\{
+\begin{aligned}
+&x^* = c/d \\
+&y^* = a/b
+\end{aligned}
+\right.
+$$
+
+## (b) Use a linear stability analysis to determine the nature of the non-trivial fixed point. Describe the resulting dynamics qualitatively.
+
+> _Hint_: Consider the following steps:
+>
+> Calculate the Jacobian of the right-hand-side of \eqref{eq:lokta-volterra} and evaluate your expression at the fixed point $(x^*,y^*)$. Then compute its eigenvalues. The real part of the eigenvalues determines whether the fixed point is attractive, whereas the imaginary part indicates oscillatory behaviour.
+
+---
+
+### Compute the eigenvalues of the Jacobian at the non-trivial fixed point.
+
+The Jacobian of the RHS of \eqref{eq:lokta-volterra} is:
+
+$$
+J = \begin{bmatrix}
+a - by & -bx \\
+dy & -c + dx
+\end{bmatrix}
+$$
+
+Evaluate at the non-trivial fixed point $(x^*,y^*) = (c/d, a/b)$:
+
+$$
+\begin{aligned}
+J^* &= \begin{bmatrix}
+a - by^* & -bx^* \\
+dy^* & -c + dx^*
+\end{bmatrix} \\
+&= \begin{bmatrix}
+0 & -bc/d \\
+ad/b & 0
+\end{bmatrix}
+\end{aligned}
+$$
+
+The eigenvalues of $J^*$ can be calculated as:
+
+$$
+\begin{aligned}
+\det(J^* - \lambda I) &= \det\begin{bmatrix}
+-\lambda & -bc/d \\
+ad/b & -\lambda
+\end{bmatrix} \\
+&= \lambda^2 + ac
+\end{aligned} \Longrightarrow \left\{
+\begin{aligned}
+  \lambda_1 &= i\sqrt{ac} \\
+  \lambda_2 &= -i\sqrt{ac}
+\end{aligned}
+\right.
+$$
+
+### Analyze the stability of the non-trivial fixed point.
+
+The eigenvalues both have a zero real part, indicating that the equilibrium is _neither attractive nor repulsive_. 
+
+The non-zero imaginary part indicates that the equilibrium is oscillatory with a period of $\sqrt{ac}$.
+
+## (c) Now consider the general Lotka-Volterra equation for $n$ species $y_i$ with real coefficients $r_i$, $b_{ij}$. Show that \eqref{eq:general-lokta} can be derived from a replicator equation with $n+1$ strategies $x_i$.
+
+\begin{equation}
+\label{eq:general-lokta}
+\begin{aligned}
+\dot{y_i} = y_i \left(
+  r_i + \sum_{j=1}^n b_{ij} y_j
+\right)
+\end{aligned}
+\end{equation}
+
+---
+
+The replicator equation with $n+1$ strategies (from the slides):
+
+$$
+\begin{aligned}
+\dot{x_i} = x_i [ f_i(x) - \phi(x)], \quad &i = 1, \ldots, n+1 \\
+& x_1 + \cdots + x_{n+1} = 1
+\end{aligned}
+$$
+
+Consider payoff matrix $A = (a_{ij})$, $f_i(x)$ is the fitness of strategy $i$ and $\phi(x)$ is the average fitness of the population.
+
+$$
+\begin{aligned}
+&f_i(x) = f_{S_i}(x) = \sum_{j=1}^{n+1} x_j a_{ij} \\
+&\phi(x) = \sum_{i=1}^{n+1} x_i f_i(x)
+\end{aligned}
+$$
+
+In the replicator equation, $x_i$ stands for the _frequency_ of species (strategy, whatsoever) $i$ in the population. The Lotka-Volterra equation describes the _count_ of species $i$. We can see the link between the two equation is:
+
+$$
+x_i = \frac{y_i}{\sum_{j=1}^{n+1} y_j},
+$$
+
+for a system with $n+1$ species.
+
+According to @bomze1995lotka, trajecgories under Lotka-Volterra system can be mapped to replicator dynamics by setting one of the $y_i$ species to $1$, and with the corresponding row $i$ in the payoff matrix set to all zeros. Here, let's set $y_{n+1} = 1$, and let $a_{n+1, j} = 0, \forall j \in [1, n+1]$.
+
+Re-writing the replicator equation under the previous setting:
+
+$$
+x_i = \frac{y_i}{1 + \sum_{j=1}^{n} y_j} 
+  \Longleftrightarrow 
+y_i = x_i \left(1 + \sum_{j=1}^{n} y_j \right)
+$$
+
+Re-writing the Lotka-Volterra equation in terms of $x_i$:
+
+$$
+\begin{aligned}
+y_i &= \frac{y_i}{1} \\
+    &= \frac{y_i}{y_{n+1}} \\
+    &= \frac{
+          x_i \cdot \cancel{\left(1 + \sum_{j=1}^{n} y_j\right)}
+        }{
+          x_{n+1} \cdot \cancel{\left(1 + \sum_{j=1}^{n} y_j\right)}
+        } \\ 
+    &= \frac{x_i}{x_{n+1}}
+\end{aligned}
+$$
+
+Using the quotient rule we have
+$$
+\begin{aligned}
+\dot{y_i} &= \frac{
+  \dot{x}_i x_{n+1} - x_i \dot{x}_{n+1}
+}{
+  x_{n+1}^2
+} \\
+&= \frac{
+  x_i [f_i(x) - \phi(x)] \cancel{x_{n+1}} - x_i \cancel{x_{n+1}} [f_{n+1}(x) - \phi(x)]
+}{
+  x_{n+1}^{\cancel{2}}
+} \\
+&= \frac{x_i}{x_{n+1}} \left(
+  f_i(x) - f_{n+1}(x)
+\right) \\
+&= \frac{x_i}{x_{n+1}} \left(
+  \sum_{j=1}^{n+1} x_ja_{ij} - \sum_{j=1}^{n+1} a_{n+1, j}x_j
+\right) \\
+&= y_i \left(
+  x_{n+1} a_{i, n+1} + \sum_{j=1}^{n} x_ja_{ij}
+\right) \qquad \text{(Since } a_{n+1, j} = 0 \text{)} \\
+&= y_i \left(
+  a_{i, n+1} + \sum_{j=1}^{n} a_{ij}y_j
+\right) x_{n+1} \\
+&= y_i \left(
+  r_i + \sum_{j=1}^{n} b_{ij}y_j
+\right)
+\end{aligned}
+$$
+
+Using the wording from @hofbauer1981occurrence: "up to the factor $x_{n+1}$ which means only a change of velocity, the Lotka-Volterra equation is just the differential equation on the simplex $S_{n+1}$ called replicator equation.
+ 
+# Problem 2: Reactive strategies
+
+> Consider the Prisoner’s Dilemma game. Imagine the game is played iteratively, and in each round the
+> players choose a strategy based on the move of the opponent in the previous round. In particular, a
+> _reactive strategy_ $S(p,q)$ consists of the following moves: 
+> 
+> - Cooperate with probability $p$ if the opponent
+> has cooperated in the round before; if he has defected, cooperate with probability $q$. 
+> - The probabilities of defecting are then given by $1 − p$, if the opponent has cooperated; $1−q$ if he has defected. 
+>
+> If both players have reactive strategies $S_1(p_1,q_1)$ and $S_2(p_2,q_2)$, the resulting dynamics are described by a
+> Markov process, because in each round the new strategies are chosen in a probabilistic way based on the
+> strategies in the previous round. The state-space of this Markov Chain is $\{CC,CD,DC,DD\}$. Here $CD$
+> denotes that player one cooperates and player two defects. The transition matrix of the Markov chain is given by:
+
+$$
+M = \bordermatrix{ & CC & CD & DC & DD \cr
+CC & p_1p_2 & p_1(1-p_2) & (1-p_1)p_2 & (1-p_1)(1-p_2) \cr
+CD & q_1p_2 & q_1(1-p_2) & (1-q_1)p_2 & (1-q_1)(1-p_2) \cr
+DC & p_1q_2 & p_1(1-q_2) & (1-p_1)q_2 & (1-p_1)(1-q_2) \cr
+DD & q_1q_2 & q_1(1-q_2) & (1-q_1)q_2 & (1-q_1)(1-q_2)
+}
+$$
+
+## (a) Show that $M$ is a stochastic matrix.
+
+A (right) stochastic matrix satisfies the following conditions:
+
+1. It's a square matrix.
+2. $0 \leq A_{ij} \leq 1, \forall i, j$
+3. $\sum_{j} A_{ij} = 1, \forall i$
+
+Condition 1 and 2 are trivially satisfied. Let's check condition 3 on row 1:
+
+$$
+\begin{aligned}
+\sum_{1} M_{1j} &= p_1p_2 + p_1(1-p_2) + (1-p_1)p_2 + (1-p_1)(1-p_2) \\
+&= p_1p_2 + p_1 - p_1p_2 + p_2 - p_1p_2 + 1 - p_1 - p_2 + p_1p_2 \\
+&= 1
+\end{aligned}
+$$
+
+The same calculation can be done for the other row (just substitue $p_1$ for $q_1$ and / or $p_2$ for $q_2$ accordingly on each row). Therefore, $M$ is a stochastic matrix.
+
+## (b) See below.
+
+> Because $M$ is regular, there exists a unique stationary distribution $x$. Define $r_1 = p_1 −q_1$, $r_2 = p_2 −q_2$, and set
+
+$$
+s_1 = \frac{q_2r_1 + q_1}{1−r_1r_2},
+\quad \text{and} \quad
+s_2 = \frac{q_1r_2 + q_2}{1−r_1r_2}.
+$$
+
+> and let
+
+$$
+ x = \left(s_1s_2, s_1(1−s_2), (1−s_1)s_2, (1−s_1)(1−s_2)\right).
+$$
+
+> Show that $x$ is the stationary distribution to the Markov chain with transition matrix $M$.
+>
+> _Note: It will be sufficient to show that the first component of $x$ solves $x_1 = \sum_j x_j M_{j1}$; the other components
+> follow by an analogous calculation which you don’t need to do_.
+
+---
+
+The stationary distribution $x$ satisfies the following equation:
+
+$$
+x = xM
+$$
+
+Let's show that the euqation holds by calculating $x_1 = \sum_j x_j M_{j1}$:
+
+$$
+\begin{aligned}
+\sum_j x_j M_{j1} 
+  &= x_1 M_{11} + x_2 M_{21} + x_3 M_{31} + x_4 M_{41} \\
+  &= s_1s_2 \cdot p_1p_2 + 
+     s_1(1 - s_2) \cdot q_1p_2 +
+     (1 - s_1)s_2 \cdot p_1q_2 +
+     (1 - s_1)(1 - s_2) \cdot q_1q_2 \\
+  &= s_1s_2 \left(
+    p_1p_2 - q_1p_2 - p_1q_2 + q_1q_2
+  \right) + s_1q_1p_2 + s_2 p_1q_2 - s_1q_1q_2 - s_2q_1q_2 + q_1q_2 \\
+  &= s_1s_2r_1r_2 + s_1q_1r_2 + s_2q_2r_1 + q_1q_2 \\
+  &= [ \left((q_2r_1 + q_1)(q_1r_2 + q_2) r_1r_2 \right) + \\
+    &\phantom{=\left(\right.}\left((q_2r_1 + q_1) \cdot q_1 r_2 \cdot (1-r_1r_2)\right) + \\
+    &\phantom{=\left(\right.}\left((q_1r_2 + q_2) \cdot q_2 r_1 \cdot (1-r_1r_2)\right) + \\
+    &\phantom{=\left(\right.}\left(q_1q_2 \cdot (1-r_1r_2)^2\right)
+  ] \cdot \frac{1}{(1-r_1r_2)^2} \\
+  &= \frac{q_1q_2r_1r_2 + q_1^2 r_2 + q_1q_2 + q_2^2 r_1}{(1-r_1r_2)^2} \\
+  &= s_1s_2 = x_1 
+\end{aligned}
+$$
+
+The other components of $x$ can be calculated in a similar way.
+
+## (c) Suppose player one plays the strategy $S_1(1,0)$, against an arbitrary reactive strategy $S_2(p2,q2)$. What is the name of strategy $S_1(1,0)$? Show that the long run expected payoff for the first player is always identical to the opponent’s payoff.
+
+The strategy $S_1(1,0)$ is called _tic-for-tac_.
+
+In this case, we have $r_1 = 1 - 0 = 1$, and $r_2 = p_2 - q_2$ and 
+
+$$
+s_1 = \frac{q_2}{1 - r_2}, \quad \text{and} \quad s_2 = \frac{q_2}{1 - r_2}
+$$
+
+We see that $s_1 = s_2$. The expected payoff at the stationary distribution is the same for both players.
+
+# References
+
+<div id="refs"></div> 
