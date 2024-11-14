@@ -307,7 +307,131 @@ Now assume that $s \leq 1$. Approximate your results from (a) and (b) and use th
 \end{equation}
 \end{displayquote}
 
+---
+
+The general expression for fixation probability $\rho(p_0)$ is (given in the slides) as:
+
+\begin{equation}
+\label{eq:general_fixation_probability}
+\rho(p_0) - \frac{
+  \int_0^{p_0} \exp \left( 
+    - \int_0^p \frac{2M(q)}{V(q)} dq
+  \right) dp
+}{
+  \int_0^1 \exp \left( 
+    - \int_0^p \frac{2M(q)}{V(q)} dq
+  \right) dp
+}
+\end{equation}
+
+Now we want to simplify the expression of $2M(q)/V(q)$. Since we have $s \leq 1$, we can write:
+
+\begin{equation}
+\label{eq:2M_over_V}
+\begin{aligned}
+\frac{2M(q)}{V(q)}
+  &= \frac{2sp(1-p)}{N(1+sp)} / \left(
+  \frac{p(1-p)}{N^2} \left( 1 + \frac{1+s}{(1+sp)^2} \right)
+\right) \\
+  &= \frac{2Ns}{1+sp} / \frac{(1+sp)^2+(1+s)}{(1+sp)^2} \\
+  &= \frac{2Ns(1+sp)}{(1+sp)^2 + (1+s)} \\
+  &\approx \frac{2Ns \cdot 1}{1^2 + 1} && (p \text{ is also small}) \\
+  &= Ns
+\end{aligned}
+\end{equation}
+
+Given \eqref{eq:2M_over_V}, we have:
+
+\begin{equation}
+\label{eq:integration}
+\int_0^p \frac{2M(q)}{V(q)} = \int_0^p Ns dq = Nsp
+\end{equation}
+
+Plug \eqref{eq:integration} back to \eqref{eq:general_fixation_probability}, we have:
+
+$$
+\begin{aligned}
+\rho(p_0 = 1/N) &= \frac{
+  \int_0^{p_0} \exp \left( 
+    - Ns
+  \right) dp
+}{
+  \int_0^1 \exp \left( 
+    - Ns
+  \right) dp
+} \\ 
+&= \frac{
+  1 - \exp(-Nsp_0)
+}{
+  1 - \exp(-Ns)
+} \\
+&= \frac{1 - e^{-s}}{1 - e^{-Ns}}
+\end{aligned},
+$$
+
+which is exactly the form of \eqref{eq:fixation_probability}.
+
 ## (e) Take the limit to derive a result for the fixation probability of a neutral allele, $s=0$. Evaluate \eqref{eq:fixation_probability} for $N=10$ and $N=1000$ for both positive and negative selection, $s=2\%$, and $s=-2\%$, respectively. Compare your result with $\rho_1$ of the exact Moran process.
+
+### Fixation probability for neutral allele
+
+$$
+\lim_{s \to 0} \frac{1 - e^{-s}}{1 - e^{-Ns}} = \frac{1 - e^0}{1 - e^0} = 1
+$$
+
+### Approximation v.s. exact Moran process
+
+The author preferred to write code block (although sometimes get the parentheses wrong) to do numeric calcualtions.
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyr)
+library(dplyr)
+library(kableExtra)
+```
+
+```{r def_exact_moran_function}
+moran_fixation_prob <- function(N, s) {
+  return((1 - 1 / (1+s)) / (1 - 1 / (1+s)^N))
+}
+```
+
+```{r def_approx_fixation_prob}
+diffusion_fixation_prob <- function(N, s) {
+  return((1 - exp(-s)) / (1 - exp(-N * s)))
+}
+```
+
+```{r compute_fix_probs}
+rho_exact_N10_spos <- moran_fixation_prob(10, 0.02)
+rho_exact_N10_sneg <- moran_fixation_prob(10, -0.02)
+rho_exact_N1000_spos <- moran_fixation_prob(1000, 0.02)
+rho_exact_N1000_sneg <- moran_fixation_prob(1000, -0.02)
+
+rho_approx_N10_spos <- diffusion_fixation_prob(10, 0.02)
+rho_approx_N10_sneg <- diffusion_fixation_prob(10, -0.02)
+rho_approx_N1000_spos <- diffusion_fixation_prob(1000, 0.02)
+rho_approx_N1000_sneg <- diffusion_fixation_prob(1000, -0.02)
+```
+
+```{r create_table, message=FALSE, warning=FALSE}
+fixation_probs <- data.frame(
+  Population_Size = c(10, 10, 1000, 1000),
+  Selection_Coefficient = c(0.02, -0.02, 0.02, -0.02),
+  Exact_Probability = c(rho_exact_N10_spos, rho_exact_N10_sneg, 
+                       rho_exact_N1000_spos, rho_exact_N1000_sneg),
+  Diffusion_Approximation = c(rho_approx_N10_spos, rho_approx_N10_sneg,
+                             rho_approx_N1000_spos, rho_approx_N1000_sneg)
+)
+
+fixation_probs %>%
+  kable(format = "latex",
+        col.names = c("N", "s", "Exact (ρ)", "Diffusion Approx. (ρ)"),
+        digits = 6,
+        caption = "Fixation Probabilities: Exact vs Diffusion Approximation") %>%
+  kable_styling(latex_options = c("striped", "hold_position"),
+                full_width = FALSE) %>%
+  row_spec(0, bold = TRUE)
+```
 
 
 # Problem 3: Absorption time in the diffusion approximation
@@ -330,5 +454,78 @@ $$
 \end{displayquote}
 
 ## (a) Calculate the _conditional expected waiting time for fixation_, $\tau_1(p_0)$, of an allele of frequency $p_0$ in the neutral Wright-Fisher process. Approximate the result for small $p_0$.
- 
+
+The original formula seems intimidating, so there must be some way to make it simpler. Fortunately, we have the following information:
+
+- $S(0) = 0$, by definition.
+- For neutral Wright-Fisher process, $M(p) = 0$, hence $A(p) = 0, \forall p$ (From slides, $M(p) = p(1-p)s/(1+ps)$, and $s \to 0$ for neutral Wright-Fisher process).
+- $S(1) = 1$ follows the previous point.
+- $V(p) = p(1-p)/N$ as from slide 19.
+- $\rho(p) = p$ for neutral Wright-Fisher process.
+
+With the above information, we can simplify the formula for $\tau_1(p_0)$:
+
+$$
+\begin{aligned}
+\tau_1(p_0) &= 2 \left(
+  \int_{p_0}^1 \frac{p(1-p)}{e^0 p(1-p)/N} dp + 
+  \frac{1 - p_0}{p_0} \int_{0}^{p_0} \frac{p^2}{e^0 p(1-p)/N} dp
+  \right) \\
+  &= 2 \left(
+    \int_{p_0}^1 N dp + 
+    \frac{1 - p_0}{p_0} \int_{0}^{p_0} \frac{Np}{1-p} dp
+  \right) \\
+  &= 2 \left(
+    N(1 - p_0) + \frac{N(1 - p_0)}{p_0} \left(-p_0 - \log(1-p_0) \right)
+  \right) \\
+  &= 2 \left(
+    N(1-p_0) - N(1-p_0) - \frac{N(1-p_0)\log(1-p_0)}{p
+    _0}
+  \right) \\
+  &= - \frac{2N(1-p_0)\log(1-p_0)}{p_0}
+\end{aligned}
+$$
+
+For small $p_0$, we can use the Taylor expansion of $\log(1-p_0)$:
+
+$$
+\begin{aligned}
+\tau_1(p_0) &= - \frac{2N(1-p_0)(-p_0 - p_o^2/2 - O(p_0^3))}{p_0} \\
+&= 2N(1-p_0)(1 + p_0/2 + O(p_0^2)) \\
+&= 2N(1 + p_0/2 + O(p_0^2)) - 2N (p_0 + O(p_0^2)) \\
+&\approx 2N(1-p_0/2) \\
+&\approx 2N & (\text{for small } p_0 \ll 1)
+\end{aligned}
+$$
+
+Therefore, for small $p_0$, the conditional expected waiting time for fixation is approximately $2N$ generations. 
+
 ## (b) Compute $\tau_0$, the conditional expected waiting time until _extinction_ (absorption in state $0$) in the neutral Wright-Fisher process. Also derive the unconditioned expected waiting time $\bar{\tau}$ until either fixation or extinction.
+
+If the current allele of interest (say $A$) goes to extinction, it means the other allele $a$ goes to fixation. If $A$ has initial abundance $p_0$, then $a$ has initial abundance $1-p_0$.
+
+$$
+\begin{aligned}
+\tau_0(p_0) &= \tau_1(1 - p_0) \\
+&= -\frac{2N(1 - (1-p_0))\log(1 - (1-p_0))}{1-p_0} \\
+&= -\frac{2Np_0\log(p_0)}{1-p_0}
+\end{aligned}
+$$
+
+For the unconditioned expected waiting time $\bar{\tau}(p_0)$
+
+- The probability of fixation is $p_0$
+- The probability of extinction is $1-p_0$
+
+Therefore:
+
+$$
+\begin{aligned}
+\bar{\tau}(p_0) &= p_0\tau_1(p_0) + (1-p_0)\tau_0(p_0) \\
+&= p_0\left(-\frac{2N(1-p_0)\log(1-p_0)}{p_0}\right) + (1-p_0)\left(-2N\left(\frac{p_0\log(p_0)}{1-p_0}\right)\right) \\
+&= -2N(1-p_0)\log(1-p_0) - 2Np_0\log(p_0) \\
+&= -2Np_0(1-p_0)[\log(1-p_0)/p_0 + \log(p_0)/(1-p_0)]
+\end{aligned}
+$$
+
+This is the general formula for the unconditional expected waiting time until absorption in either state 0 or 1.
