@@ -8,3 +8,191 @@ output:
     latex_engine: xelatex
     extra_dependencies:  [ "amsmath", "amsthm", "amssymb", "cancel", "unicode-math", "csquotes" ]
 ---
+
+# Problem 1: Weak selection
+
+> Consider a population of size $N$ engaged in a two-player evolutionary game. The population consists of
+> two types of individuals, $A$ and $B$, with frequencies $x_A$ and $x_B = 1−x_A$, respectively. The fitness of the
+> two types depends on the payoffs from the game and is given by the payoff matrix:
+
+$$
+\bordermatrix{ & A & B \cr
+A & a & b \cr
+B & c & d \cr}
+$$
+
+> The average payoffs (fitness) of individuals of type $A$ and $B$, denoted by $f_A$ and $f_B$, respectively, are given by:
+
+$$
+\begin{aligned}
+f_A &= a x_A + b(1 - x_A) = ax_A + bx_B \\
+f_B &= c x_A + d(1 - x_A) = cx_A + dx_B
+\end{aligned}
+$$
+
+## (a) Write down the replicator equation for the change in the frequency $x_A$ of type $A$ in the population overtime.
+
+Consider a population of size $N$, then under the current settings we have $x_A N$ individuals of type $A$ and $(1 - x_A)N$ individuals of type $B$.
+
+
+
+
+
+## (b) Now assume weak selection, where the fitness is given by $1 + \delta f_i$, where $f_i$ is the payoff for type $i$ and $\delta$ is a small selection strength parameter. Linearize the replicator equation to first order in $\delta$.
+
+Let $x := (x_A,x_B)$. We reenote the fitness of type $A$ as $F_A$
+
+$$
+\begin{aligned}
+\dot{x}_A &= x_A[F_A - \phi]
+\end{aligned}
+$$
+
+## (c) Determine the condition for evolutionary stability (ESS) of type $A$. What condition must the payoff parameters $a, b, c, d$ satisfy for $A$ to be evolutionary stable? How does this depend on the choice of $\delta$?
+
+## (d) Analyze condition for evolutionary stability.
+
+> Suppose $A$ and $B$ represent two strategies in the classic Hawk-Dove ganme, with the follwoing payoff matrix:
+
+$$
+\begin{array}{c|cc}
+ & \text{Hawk} & \text{Dove} \\
+\hline
+\text{Hawk} & \frac{V-C}{2} & V \\
+\text{Dove} & 0 & \frac{V}{2}
+\end{array}
+$$
+
+> where $V$ is the value of the contested resource and $C$ is the cost of fighting. Analyze the condition for evolutionary stability under weak selection for this game.
+
+# Problem 2: Strong selection
+
+> Consider the two-strategy game
+
+$$
+\bordermatrix{ & A & B \cr
+A & a & b \cr
+B & c & d \cr}
+$$
+
+## (a) In an _infinite_ population with replicator dynamics, decide for all games of this type whether strategies $A$ and $B$ are dominant, coexisting or bi-stable, based on the two varaibles $\xi = a -c$ and $\zeta = d - b$.
+
+Regurgitating lecture slides:
+
+- $\xi > 0$, $\zeta > 0$: $A$ and $B$ are bi-stable ($a > c$, $d > b$)
+- $\xi < 0$, $\zeta < 0$: $A$ and $B$ are coexisting ($a < c$, $d < b$)
+- $\xi > 0$, $\zeta < 0$: $A$ is dominant ($a > c$, $d < b$)
+- $\xi < 0$, $\zeta > 0$: $B$ is dominant ($a < c$, $d > b$)
+- $\xi = 0$, $\zeta = 0$: $A$ and $B$ are neutral ($a = c$, $d = b$)
+
+---
+
+**(Problem (2) continued)**
+
+> Now consider a population of _finite size_ $N$ that evolves according to an unstructured Moran process. Suppose the fitness of $A$ and $B$ are given respectively by
+
+$$
+\begin{aligned}
+f_i &= \frac{a(i-1) + b(N-i)}{N-1} \\
+g_i &= \frac{ci + d(N - i - 1)}{N-1}.
+\end{aligned}
+$$
+
+> Note that this corresponds to limit of strong selection $w = 1$, as compared to the lecture. We want to classify the evolutionary stability of $A$ and $B$ as a function of the population size $N$ and the payoff values $a$, $b$, $c$, and $d$. To this end, we analyze the difference in fitness $h_i = f_i - g_i$.
+
+## (b) Analyze the relationship between $h_i$, $\xi$, and $\zeta$.
+
+> Show that
+
+$$
+h_i = \xi' \frac{i}{N - 1} - \zeta' \frac{N-i}{N-1}
+$$
+
+> with 
+
+$$
+\xi' = \xi - \frac{a-d}{n} \quad \text{and} \quad \zeta' = \zeta + \frac{a-d}{N}.
+$$
+
+---
+
+\begin{proof}
+$$
+\begin{aligned}
+h_i &= f_i - g_i \\
+&= \frac{a(i-1) + b(N -i)}{N - 1} - 
+   \frac{ci + d(N - i - 1)}{N - 1} \\
+&= \frac{
+  ai - a + bN - b - ci - dN + di + d
+}{N -1} \\
+&= \frac{
+  (a - c)i - (d - b)(N - i) - (a - d)
+}{N - 1} \\
+&= \frac{
+  (a-c)i - (d-b)(N-1) - (a-d)\cdot (N - i + i) / N
+}{N - 1} \\ 
+&= \frac{i}{N-1} \cdot \left(
+  (a-c) - \frac{a-d}{N}
+\right) - \frac{N-i}{N-1} \cdot \left(
+ (d-b) + \frac{a-d}{N}
+\right) \\
+&= \xi' \frac{i}{N - 1} - \zeta' \frac{N-i}{N-1}
+\end{aligned}
+$$
+\end{proof}
+
+## (c) Show that for $\xi' > 0 > \zeta'$, strategy $A$ is dominant. Derive a criterion for the dominance of $B$.
+
+Given $\xi' > 0 > \zeta'$, we have $h_i > 0$ since it becomes the sum of two positive numbers, which means that $A$ is dominant by the definition of $h_i$ ($f_i > g_i$).
+
+For $B$ to be dominant, we must have $f_i < g_i$ i.e. $h_i < 0$. This means that $\xi' < 0$ and $\zeta' > 0$.
+
+
+# Problem 3: Hawk-Dove game example
+
+> Consider an (infinite) population where individuals can adopt one of two strategies: Hawk (H) or Dove (D). They payoff matrix for interactions between individuals using these strategies is given by:
+
+$$
+\begin{array}{c|cc}
+ & \text{Hawk} & \text{Dove} \\
+\hline
+\text{Hawk} & \frac{V-C}{2} & V \\
+\text{Dove} & 0 & \frac{V}{2}
+\end{array}
+$$
+
+> where V is the value of the resource $V > 0$ and $C$ is the cost of the conflict. Assume $V < C$. Which (if any) of the following statements is true regarding the conditions for an Evolutionarily Stable Strategy (ESS) in this game? Please provide a proper rationale for your answer.
+
+\begin{enumerate}
+\renewcommand{\labelenumi}{\Alph{enumi})}
+  \item Strategy Hawk (H) is an ESS if $(V-C)/2 > 0$ and $V \geq V/2$
+  \item Strategy Dove (D) is an ESS if $V/2 > 0$ and $0 \geq V$
+  \item Strategy Hawk (H) is an ESS if $(V-C)/2 > V$ and $V \geq V/2$
+  \item Strategy Dove (D) is an ESS if $V/2 > 0$ and $0 \geq (V-C)/2$
+\end{enumerate}
+
+---
+
+Regurgitating the lecture slides:
+
+$S_k$ is an ESS if $\forall i \neq k$, either
+
+- $a_{kk} > a_{ik}$, or
+- $a_{kk} = a_{ik}$ and $a_{ki} > a_{ii}$
+
+In the Hawk-Dove game settings, if we want strategy $H$ to be an ESS, we must have
+
+- $(V-C)/2 > V \rightarrow V < -C$
+- $(V-C)/2 = V \rightarrow V = -C$ and $V > V/2$ (trivially true)
+
+We can see that when $C > V > 0$, neither of the conditions are satisfied, so strategy $H$ is never an ESS.
+
+For strategy $D$ to be an ESS, we must have
+
+- $V/2 > 0$, or
+- $V/2 = 0 \rightarrow V = 0$ and $(V-C)/2 < 0$.
+
+We can see that when $C > V > 0$, the first condition is satisfied, so strategy $D$ is an ESS.
+
+Following the retionale, the correct answer is $\boxed{\text{D}}$.
+
