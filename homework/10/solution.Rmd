@@ -1,5 +1,5 @@
 ---
-title: "Title"
+title: "Evolutionary Dynamics Homework 10"
 date:  "`r format(Sys.time(), '%B %d, %Y %H:%m')` (`r Sys.timezone()`)"
 author: "Minghang Li"
 mainfont: "KpRoman"
@@ -8,3 +8,195 @@ output:
     latex_engine: xelatex
     extra_dependencies:  [ "amsmath", "amsthm", "amssymb", "cancel", "unicode-math", "csquotes" ]
 ---
+
+# Problem 2: Probability generating function
+
+> Let $Z$ be a random variable such that $Z \in \mathbb{Z}^+$, and $p_i$ is its distribution, _i.e._ $\text{Prob}[Z = i] = p_i$. The probability generating function (_pgf_) of $Z$ is a function of a symbolic argument $s$, defined as the expected value
+
+$$
+\begin{aligned}
+f_Z(s) = E[s^Z] = \sum_{i=0}^\infty p_i s^i && s \in [0, 1]
+\end{aligned}
+$$
+
+> We assume that all probability generating functions are absolutely convergent on the interval $[0, 1]$. _Note: This is a technical requirement to ensure tht summand-wise operations are permitted_.
+
+> Prove the following statements
+
+## (a) $E[Z] = f_Z'(1)$
+
+\begin{proof}
+Compute the derivative of $f_Z(s)$ with respect to $s$:
+\begin{equation}
+f_Z'(s) = \sum_{i=1}^\infty i \cdot p_i \cdot s^{i-1}
+\end{equation}
+Then we have 
+
+\begin{equation}
+f_Z'(1) = \sum_{i=1}^\infty i \cdot p_i,
+\end{equation}
+
+where $i$ is the number of individuals in a generation (definition of $Z$), and $p_i$ is the probability of $Z = i$, which is exactly the definition of $E[Z]$. Therefore, $E[Z] = f_Z'(1)$.
+\end{proof}
+
+## (b) $Var[Z] = f_Z'(1) + f_Z''(1) - f_Z'(1)^2$
+
+\begin{proof}
+Compute the second derivative of $f_Z(s)$ with respect to $s$:
+
+\begin{equation}
+f''_Z(s) = \sum_{i=2}^\infty i(i-1) \cdot p_i \cdot s^{i-2}
+\end{equation}
+
+Plug in $s = 1$:
+
+\begin{equation}
+\label{eq:fz_der2_1}
+\begin{aligned}
+f''_Z(1) &= \sum_{i=0}^\infty i(i-1) \cdot p_i \\
+         &= \sum_{i=0}^\infty i^2 \cdot p_i - \sum_{i=0}^\infty i \cdot p_i
+\end{aligned}
+\end{equation}
+
+
+According to definition and \textbf{(a)},
+
+\begin{equation}
+\label{eq:var}
+\begin{aligned}
+Var[Z] &= E[Z^2] - E[Z]^2 \\
+       &= E[Z^2] - f_Z'(1)^2 \\
+\end{aligned}
+\end{equation}
+
+By definition of expectaion, we can rewrite:
+
+\begin{equation}
+\label{eq:ez2}
+E[Z^2] = \sum_{i=0}^\infty i^2 \cdot p_i
+\end{equation}
+
+Combining \eqref{eq:fz_der2_1}, \eqref{eq:var}, and \eqref{eq:ez2}, we have:
+
+$$
+\begin{aligned}
+Var[Z] &= E[Z^2] - E[Z]^2 \\
+       &= E[Z^2] - f_Z'(1)^2 \\
+       &= f''_Z(1) + f'_Z(1) - f'_Z(1)^2
+\end{aligned}
+$$
+\end{proof}
+
+## (c) $d^k f_Z / ds^k \rvert_{s=0} = k! \cdot p_k$
+
+\begin{proof}
+$$
+\begin{aligned}
+\frac{df}{ds} &= \sum_{k=0}^\infty k \cdot p_k \cdot s^{k-1} \\
+\frac{d^2 f}{ds^2} &= \sum_{k=0}^\infty k(k-1) \cdot p_k \cdot s^{k-2} \\
+&\vdots \\
+\frac{d^k f}{ds^k} &= \sum_{k=0}^\infty k(k-1)\cdots 2 \cdot 1 \cdot p_k \cdot s^{k-k} \\
+&= k! \cdot p_k
+\end{aligned}
+$$
+
+Interestingly, any $k \in [0, k-1]$ will make the term $k(k-1) \cdots 2 \cdot 1 = 0$, which means the sum will be zero. Therefore, the only term left is $k! \cdot p_k$. Hence we can directly write:
+
+$$
+\frac{d^k f_Z}{ds^k} = k! \cdot p_k \cdot s^0 = k! \cdot p_k
+$$
+
+That is also true for $s = 0$ (actually since we have $s^0$ in the equation, the value of $s$ does not matter). Therefore, $d^k f_Z / ds^k \rvert_{s=0} = k! \cdot p_k$.
+\end{proof}
+
+## (d) $f_{Z+Y} (s) = f_Z(s)f_Y(s)$, given that i.i.d. $Z, Y \in \mathbb{Z}^+$
+
+\begin{proof}
+Following the denotation of $Z$, we define  $\text{Prob}[Y = k] = p_k$ and $f_Y(s) = \sum_{k=0}^\infty p_k s^k = E[s^{Y}]$
+$$
+\begin{aligned}
+f_{Z+Y}(s) &= E\left[s^{Z+Y}\right] \\ 
+        &= \sum_{k=0}^\infty \sum_{i=0}^\infty p_k p_i s^{k+i} \\
+        &= \sum_{k=0}^\infty \sum_{i=0}^\infty p_k s^k p_i s^i \\
+        &= \left(\sum_{k=0}^\infty p_k s^k\right) \left(\sum_{i=0}^\infty p_i s^i\right) \\
+        &= f_Y(s) f_Z(s)
+\end{aligned}
+$$
+\end{proof}
+
+## (e) See below.
+
+> Given random variable $Y \in \mathbb{Z}^+$ and $\{ Z^{(i)}, i \geq 1 \}$ is a sequence of independent identically distributed random variables in $\mathbb{Z}^+$ independent of $Y$, then $V = \sum_{i=1}^Y Z^{(i)}$ has the pgf $f_V(s) = f_Y[f_{Z^{(1)}}(s)]$.
+>
+> _Hint: Use (d) and the law of total expectations_
+
+---
+
+\begin{proof}
+Expand the RHS:
+
+$$
+\begin{aligned}
+f_Y[f_{Z^{(1)}}(s)] &= f_Y\left[E\left[s^{Z^{(1)}}\right]\right] \\
+  &= E \left[E\left[s^{Z^{(1)}}\right]^Y\right] \\
+  &=E \underbrace{\left[ E\left[s^{Z^{(1)}}\right] \cdots E\left[s^{Z^{(1)}}\right] \right]}_{\text{Y times}} \\
+  &= \underbrace{E \left[ E \left [s^{Z^{(1)}} \right] \right] \cdots E \left[ E \left [s^{Z^{(1)}} \right] \right]}_{\text{Y times}}  & (E[XY] = E[X]E[Y])\\
+  &= E\left[s^{Z^{(1)}}\right]^Y  & (E[E[X]] = E[X]) \\
+\end{aligned}
+$$
+
+Expand the LHS:
+
+$$
+\begin{aligned}
+f_V(s) &= f_{\sum_{i=1}^Y Z^{(i)}} (s) \\
+  &= f_{Z^{(1)}}(s) f_{Z^{(2)}}(s) \cdots f_{Z^{(Y)}}(s) & \text{(by (d))} \\
+  &= f_{Z^{(1)}}(s)^Y & Z^{(i)}\text{ are identically distributed} \\
+\end{aligned}
+$$
+
+By definition we know
+
+$$
+f_{Z^{(1)}}(s) = E\left[s^{Z^{(1)}}\right]
+$$
+
+Hence we have LHS = RHS, $f_V(s) = f_Y[f_{Z^{(1)}}(s)]$.
+\end{proof}
+
+# Problem 3: The Luria-Delbrück experiment
+
+## (a) See below.
+
+> Compute the probability $P_0(t)$ that no mutations have occured at time $t$. Show that the mutation rate $\alpha$ can be estimated as
+
+$$
+\alpha = \frac{\beta \ln \rho}{ 1 - e^{\beta t}},
+$$
+
+> where $\rho$ is the ratio of experiments in which resistance was not found (estimator for $P_0(t)$). Assume $N(0) = 1$.
+
+> _Hint_: Assume that in a small time interval $[t, t + \Delta t]$ the number of mutants is Poisson distributed at rate $\alpha N(t) \Delta t$ to show that 
+
+$$
+\begin{aligned}
+P_0(t) &= P(\text{0 mutants in }[0, \Delta t]) \cdot 
+          P(\text{0 mutants in }[\Delta t, 2\Delta t]) \cdots
+          P(\text{0 mutants in }[t - \Delta t, t]) \\
+ &\approx \exp[-\alpha N(0) \Delta t] \cdots \exp[-\alpha N(t - \Delta t) \Delta t]
+\end{aligned}
+$$
+
+> and let $\Delta t \to 0$. Explain the assumptions made in this calculation.
+
+---
+
+
+
+## (b)
+
+## (c)
+
+## (d)
+
+
